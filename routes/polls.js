@@ -90,13 +90,15 @@ router.put('/:id', async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this poll' });
     }
 
-    const { title, description, questions, expireAt } = req.body;
+    const { title, description, questions, expireAt, consentEnabled, consentText } = req.body;
 
     // Update poll
     poll.title = title || poll.title;
     poll.description = description !== undefined ? description : poll.description;
     poll.questions = questions || poll.questions;
     poll.expireAt = expireAt || poll.expireAt;
+    poll.consentEnabled = consentEnabled !== undefined ? consentEnabled : poll.consentEnabled;
+    poll.consentText = consentText !== undefined ? consentText : poll.consentText;
 
     await poll.save();
 
