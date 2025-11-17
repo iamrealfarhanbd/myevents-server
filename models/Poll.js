@@ -35,6 +35,14 @@ const PollSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  consentEnabled: {
+    type: Boolean,
+    default: false
+  },
+  consentText: {
+    type: String,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now

@@ -54,6 +54,12 @@ router.post('/submit/:pollId', async (req, res) => {
       return res.status(404).json({ message: 'Poll not found or has expired' });
     }
 
+    // Check if consent is required and was provided
+    const { consentAgreed } = req.body;
+    if (poll.consentEnabled && !consentAgreed) {
+      return res.status(400).json({ message: 'You must agree to the consent terms to submit this poll' });
+    }
+
     // Create submission with the same expireAt as the parent poll
     const submission = await Submission.create({
       poll: poll._id,
@@ -61,6 +67,7 @@ router.post('/submit/:pollId', async (req, res) => {
       participantEmail,
       participantPhone: participantPhone || '',
       answers,
+      consentAgreed: poll.consentEnabled ? consentAgreed : false,
       expireAt: poll.expireAt // CRUCIAL: Same expiry as poll
     });
 

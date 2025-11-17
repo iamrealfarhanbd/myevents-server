@@ -30,6 +30,10 @@ const SubmissionSchema = new mongoose.Schema({
       }
     }
   ],
+  consentAgreed: {
+    type: Boolean,
+    default: false
+  },
   submittedAt: {
     type: Date,
     default: Date.now
