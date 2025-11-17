@@ -22,7 +22,9 @@ router.get('/poll/:pollId', async (req, res) => {
         title: poll.title,
         description: poll.description,
         questions: poll.questions,
-        expireAt: poll.expireAt
+        expireAt: poll.expireAt,
+        consentEnabled: poll.consentEnabled || false,
+        consentText: poll.consentText || null
       }
     });
   } catch (error) {
