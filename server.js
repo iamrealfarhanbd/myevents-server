@@ -10,6 +10,9 @@ const authRoutes = require('./routes/auth');
 const pollRoutes = require('./routes/polls');
 const publicRoutes = require('./routes/public');
 const resultsRoutes = require('./routes/results');
+// 🆕 BOOKING SYSTEM ROUTES - Can be removed if system not needed
+const bookingVenueRoutes = require('./routes/bookingVenues');
+const bookingRoutes = require('./routes/bookings');
 
 const app = express();
 
@@ -79,12 +82,15 @@ app.use((req, res, next) => {
 // 5. Rate limiting - Prevent brute force attacks
 const rateLimit = require('express-rate-limit');
 
+// More generous rate limiting for development
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 1000, // Increased to 1000 requests per 15 minutes
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip rate limiting in development
+  skip: (req) => process.env.NODE_ENV === 'development'
 });
 
 app.use('/api/', limiter);
@@ -94,6 +100,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/polls', pollRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/results', resultsRoutes);
+// 🆕 BOOKING SYSTEM ROUTES - Can be removed if system not needed
+app.use('/api/booking-venues', bookingVenueRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // Root route
 app.get('/', (req, res) => {

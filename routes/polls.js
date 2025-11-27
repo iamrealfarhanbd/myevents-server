@@ -1,10 +1,72 @@
 const express = require('express');
 const Poll = require('../models/Poll');
+const Submission = require('../models/Submission');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Apply protect middleware to all routes
+// 🆕 PUBLIC ROUTE - Must be before protect middleware
+// @route   GET /api/polls/public
+// @desc    Get all active polls for public viewing
+// @access  Public
+router.get('/public', async (req, res) => {
+  try {
+    // Get all polls that haven't expired yet and populate user info
+    const polls = await Poll.find({ expireAt: { $gte: new Date() } })
+      .populate('user', 'name')
+      .sort({ createdAt: -1 });
+    
+    // Transform polls to match the expected format
+    const formattedPolls = await Promise.all(polls.map(async (poll) => {
+      // Get the first question as the main question
+      const mainQuestion = poll.questions[0] || {};
+      
+      // Count submissions for this poll
+      const submissionCount = await Submission.countDocuments({ poll: poll._id });
+      
+      // Count votes for each option
+      const submissions = await Submission.find({ poll: poll._id });
+      const optionVotes = {};
+      
+      submissions.forEach(submission => {
+        submission.answers.forEach(answer => {
+          if (answer.questionId === mainQuestion.id) {
+            optionVotes[answer.answer] = (optionVotes[answer.answer] || 0) + 1;
+          }
+        });
+      });
+      
+      // Format options with vote counts
+      const optionsWithVotes = (mainQuestion.options || []).map(option => ({
+        text: option,
+        votes: optionVotes[option] || 0
+      }));
+      
+      return {
+        _id: poll._id,
+        question: mainQuestion.text || poll.title,
+        description: poll.description,
+        options: optionsWithVotes,
+        startDate: poll.createdAt,
+        endDate: poll.expireAt,
+        location: '', // Polls don't have location, but keeping for consistency
+        createdBy: poll.user?.name || 'Anonymous',
+        createdAt: poll.createdAt,
+        totalSubmissions: submissionCount
+      };
+    }));
+
+    res.json({ 
+      success: true,
+      polls: formattedPolls 
+    });
+  } catch (error) {
+    console.error('Get public polls error:', error);
+    res.status(500).json({ message: 'Server error fetching polls' });
+  }
+});
+
+// Apply protect middleware to all routes below this point
 router.use(protect);
 
 // @route   POST /api/polls
