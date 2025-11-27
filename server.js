@@ -10,6 +10,7 @@ const authRoutes = require('./routes/auth');
 const pollRoutes = require('./routes/polls');
 const publicRoutes = require('./routes/public');
 const resultsRoutes = require('./routes/results');
+const settingsRoutes = require('./routes/settings');
 // 🆕 BOOKING SYSTEM ROUTES - Can be removed if system not needed
 const bookingVenueRoutes = require('./routes/bookingVenues');
 const bookingRoutes = require('./routes/bookings');
@@ -32,7 +33,7 @@ app.use((req, res, next) => {
   if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
     res.header('Access-Control-Allow-Origin', origin || allowedOrigins[0]);
   }
-  
+
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -100,13 +101,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/polls', pollRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/results', resultsRoutes);
+app.use('/api/settings', settingsRoutes);
 // 🆕 BOOKING SYSTEM ROUTES - Can be removed if system not needed
 app.use('/api/booking-venues', bookingVenueRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 // Root route
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to MyEvents API - Temporary Poll Platform' });
+  res.json({ message: 'Welcome to EventPro API - Event Management & Booking System' });
 });
 
 // Error handler

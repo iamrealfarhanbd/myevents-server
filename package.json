@@ -1,8 +1,8 @@
 {
-  "name": "myevents-server",
+  "name": "eventpro-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Event Management & Booking System - Backend API",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",

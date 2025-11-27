@@ -8,6 +8,47 @@ const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
+// @route   GET /api/bookings/venue/:venueId
+// @desc    Get all bookings for a specific venue
+// @access  Protected
+router.get('/venue/:venueId', protect, async (req, res) => {
+  try {
+    // First check if venue exists and belongs to user
+    const venue = await BookingVenue.findById(req.params.venueId);
+    
+    if (!venue) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Venue not found' 
+      });
+    }
+
+    // Check if user owns the venue
+    if (venue.user.toString() !== req.user.id) {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Not authorized to view bookings for this venue' 
+      });
+    }
+
+    // Get all bookings for this venue
+    const bookings = await Booking.find({ venue: req.params.venueId })
+      .populate('venue', 'name venueType')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      bookings
+    });
+  } catch (error) {
+    console.error('Error fetching venue bookings:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error while fetching bookings' 
+    });
+  }
+});
+
 // Apply protect middleware to admin routes
 router.use('/admin', protect);
 

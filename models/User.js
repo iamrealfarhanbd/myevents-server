@@ -16,6 +16,24 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add a password']
   },
+  businessName: {
+    type: String,
+    default: ''
+  },
+  businessType: {
+    type: String,
+    enum: ['restaurant', 'hotel', 'cafe', 'bar', 'venue', 'other'],
+    default: 'restaurant'
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'manager', 'staff'],
+    default: 'admin'
+  },
+  isSetupComplete: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now

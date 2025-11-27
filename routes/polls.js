@@ -74,7 +74,7 @@ router.use(protect);
 // @access  Protected
 router.post('/', async (req, res) => {
   try {
-    const { title, description, questions, expireAt } = req.body;
+    const { title, description, questions, expireAt, consentEnabled, consentText } = req.body;
 
     // Validation
     if (!title || !questions || !expireAt) {
@@ -87,6 +87,8 @@ router.post('/', async (req, res) => {
       description: description || '',
       questions,
       expireAt,
+      consentEnabled: consentEnabled || false,
+      consentText: consentEnabled ? consentText : null,
       user: req.user.id
     });
 
@@ -106,7 +108,17 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const polls = await Poll.find({ user: req.user.id }).sort({ createdAt: -1 });
-    res.json({ polls });
+    
+    // Add submission count to each poll
+    const pollsWithResponses = await Promise.all(polls.map(async (poll) => {
+      const submissionCount = await Submission.countDocuments({ poll: poll._id });
+      return {
+        ...poll.toObject(),
+        responses: Array(submissionCount).fill(null) // Create an array with length = submission count
+      };
+    }));
+    
+    res.json({ polls: pollsWithResponses });
   } catch (error) {
     console.error('Get polls error:', error);
     res.status(500).json({ message: 'Server error fetching polls' });
