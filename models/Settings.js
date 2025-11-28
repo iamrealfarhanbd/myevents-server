@@ -97,6 +97,12 @@ const SettingsSchema = new mongoose.Schema({
     default: true
   },
 
+  // Header Display Options
+  showBusinessNameInHeader: {
+    type: Boolean,
+    default: true
+  },
+
   // SEO
   metaTitle: {
     type: String,
