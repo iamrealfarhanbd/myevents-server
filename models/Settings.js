@@ -142,12 +142,11 @@ const SettingsSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Ensure only one settings document exists
+// Get site settings without auto-creation
 SettingsSchema.statics.getSiteSettings = async function() {
   let settings = await this.findOne();
-  if (!settings) {
-    settings = await this.create({});
-  }
+  // Return null if no settings exist (don't auto-create)
+  // Settings will be created during admin setup
   return settings;
 };
 

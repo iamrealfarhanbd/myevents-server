@@ -10,6 +10,38 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const settings = await Settings.getSiteSettings();
+    
+    // If no settings exist, return default values (don't create in DB)
+    if (!settings) {
+      return res.json({
+        businessName: 'MyEvents',
+        businessType: 'restaurant',
+        businessDescription: 'Event Management & Booking System',
+        primaryColor: '#7c3aed',
+        secondaryColor: '#3b82f6',
+        accentColor: '#ec4899',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        fontSize: 'medium',
+        borderRadius: 'medium',
+        logo: '',
+        favicon: '',
+        contactEmail: '',
+        contactPhone: '',
+        website: '',
+        address: '',
+        enablePolls: true,
+        enableBookings: true,
+        enableEvents: true,
+        facebook: '',
+        instagram: '',
+        twitter: '',
+        linkedin: '',
+        metaTitle: '',
+        metaDescription: '',
+        isInitialized: false
+      });
+    }
+    
     res.json(settings);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
