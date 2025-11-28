@@ -1,6 +1,3 @@
-// 🆕 NEW FILE - BOOKING SYSTEM
-// This file can be deleted if booking system is not needed
-
 const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({

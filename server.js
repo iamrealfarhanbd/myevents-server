@@ -11,7 +11,6 @@ const pollRoutes = require('./routes/polls');
 const publicRoutes = require('./routes/public');
 const resultsRoutes = require('./routes/results');
 const settingsRoutes = require('./routes/settings');
-// 🆕 BOOKING SYSTEM ROUTES - Can be removed if system not needed
 const bookingVenueRoutes = require('./routes/bookingVenues');
 const bookingRoutes = require('./routes/bookings');
 
@@ -102,7 +101,6 @@ app.use('/api/polls', pollRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/results', resultsRoutes);
 app.use('/api/settings', settingsRoutes);
-// 🆕 BOOKING SYSTEM ROUTES - Can be removed if system not needed
 app.use('/api/booking-venues', bookingVenueRoutes);
 app.use('/api/bookings', bookingRoutes);
 
